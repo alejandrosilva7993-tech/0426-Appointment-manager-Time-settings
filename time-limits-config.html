@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Limits - Transport Portal</title>
+  <link href="https://unpkg.com/primeng@17.18.0/resources/themes/lara-light-blue/theme.css" rel="stylesheet">
+  <link href="https://unpkg.com/primeicons@7.0.0/primeicons.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+    :root {
+      --surface-0: #ffffff;
+      --surface-50: #fbfcfe;
+      --surface-100: #f1f5f9;
+      --surface-200: #e2e8f0;
+      --surface-300: #cbd5e1;
+      --surface-500: #64748b;
+      --primary-500: #3b82f6;
+      --primary-600: #2563eb;
+      --success-50: #ecfdf5;
+      --success-200: #bbf7d0;
+      --success-700: #15803d;
+      --danger-200: #fecaca;
+      --danger-700: #b91c1c;
+      --required-asterisk: #b4534a;
+      --page-title: #0f172a;
+      --breadcrumb-link: #3b82f6;
+      --breadcrumb-link-hover: #2563eb;
+      --breadcrumb-muted: #475569;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-family, system-ui, sans-serif);
+      background: var(--surface-50);
+      color: #475569;
+    }
+    .pi {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      font-size: 1rem;
+      line-height: 1;
+      display: inline-block;
+      min-width: 1em;
+      text-rendering: auto;
+    }
+    .hidden { display: none !important; }
+    .req-ast {
+      color: var(--required-asterisk);
+      font-weight: 600;
+      margin-left: 0.12em;
+    }
+
+    .shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs { margin-bottom: 0.75rem; }
+    .breadcrumbs-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 0.5rem;
+      font-size: 0.8125rem;
+    }
+    .breadcrumbs-list > li { display: inline-flex; align-items: center; }
+    .breadcrumb-link {
+      color: var(--breadcrumb-link);
+      text-decoration: none;
+      font-weight: 400;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+    .breadcrumb-link:hover { text-decoration: underline; color: var(--breadcrumb-link-hover); }
+    .breadcrumbs-sep { color: var(--breadcrumb-muted); user-select: none; }
+    .breadcrumb-current { color: var(--breadcrumb-muted); }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--page-title);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+    .header-sub {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #64748b;
+      max-width: 58rem;
+    }
+
+    /* Toast */
+    .message {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.25rem;
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem 0.9rem 1.1rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      border-left-width: 4px;
+      font-size: 0.875rem;
+      line-height: 1.4;
+      min-width: min(20rem, calc(100vw - 2.5rem));
+      max-width: min(26rem, calc(100vw - 2.5rem));
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+      animation: toast-in 0.2s ease;
+    }
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(-0.5rem); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .message-success {
+      background: var(--success-50);
+      border-color: var(--success-200);
+      border-left-color: var(--success-700);
+      color: var(--success-700);
+    }
+    .toast-icon {
+      flex-shrink: 0;
+      font-size: 1.1rem;
+      margin-top: 0.05rem;
+    }
+    .toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .toast-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      line-height: 1.3;
+      display: block;
+    }
+    .toast-text {
+      font-size: 0.845rem;
+      font-weight: 400;
+      line-height: 1.4;
+      display: block;
+      margin-top: 0.1rem;
+    }
+    .toast-close {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.6;
+      padding: 0;
+      font-size: 0.9rem;
+      line-height: 1;
+      margin-top: 0.1rem;
+      transition: opacity 0.15s;
+    }
+    .toast-close:hover { opacity: 1; }
+
+    /* Section header with divider */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.6rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--surface-200);
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #334155;
+      letter-spacing: 0;
+    }
+
+    /* Form wrapper — constrains divider and buttons to fields width */
+    .form-wrap {
+      max-width: 44.5rem;
+    }
+
+    /* Form */
+    .fields-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 14rem));
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .field-block {
+      padding: 0;
+    }
+    .field {
+      display: grid;
+      gap: 0.25rem;
+    }
+    .field-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: #6b7280;
+    }
+    .field-help {
+      font-size: 0.72rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+    .field-error {
+      min-height: 0.9rem;
+      font-size: 0.74rem;
+      color: var(--danger-700);
+    }
+
+    /* Number input with unit addon */
+    .input-group {
+      display: flex;
+      align-items: stretch;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      overflow: hidden;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group:focus-within {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 1px #93c5fd;
+    }
+    .num-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      padding: 0.5rem 0.7rem;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #374151;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .num-input::-webkit-outer-spin-button,
+    .num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .num-input::placeholder { color: #9ca3af; }
+    .input-addon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: #f3f4f6;
+      border-left: 1px solid #e5e7eb;
+      user-select: none;
+      white-space: nowrap;
+    }
+    /* Spinner buttons */
+    .spin-btns {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #e5e7eb;
+    }
+    .spin-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: #f3f4f6;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 0 0.45rem;
+      line-height: 1;
+      transition: background 0.15s, color 0.15s;
+      min-width: 1.5rem;
+    }
+    .spin-btn .pi { font-size: 0.7rem; }
+    .spin-btn:hover { background: #e9ecef; color: #374151; }
+    .spin-btn:first-child { border-bottom: 1px solid #e5e7eb; }
+
+    /* Segmented control */
+    .seg-control {
+      display: flex;
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .seg-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.4rem 0.55rem;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #374151;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .seg-btn .pi { font-size: 0.75rem; }
+    .seg-btn + .seg-btn {
+      border-left: none;
+    }
+    .seg-btn:hover:not(.seg-btn--active) {
+      background: #f3f4f6;
+    }
+    .seg-btn--active {
+      background: var(--primary-500);
+      color: #fff;
+      font-weight: 600;
+      border-left-color: var(--primary-600);
+    }
+
+    .help-icon-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .help-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    .help-icon:hover,
+    .help-icon:focus-visible { color: var(--primary-600); }
+    .help-icon:focus-visible {
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .tooltip {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 0.45rem);
+      transform: translateX(-50%);
+      width: 17rem;
+      padding: 0.7rem 0.8rem;
+      border-radius: 8px;
+      background: #0f172a;
+      color: white;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 5;
+    }
+    .help-icon-wrap:hover .tooltip,
+    .help-icon-wrap:focus-within .tooltip { opacity: 1; }
+
+    .switch-control {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .switch-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+    }
+    .switch-slider {
+      display: inline-flex;
+      width: 2.8rem;
+      height: 1.6rem;
+      border-radius: 999px;
+      background: #cbd5e1;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .switch-slider::after {
+      content: '';
+      position: absolute;
+      top: 0.18rem;
+      left: 0.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.18);
+      transition: transform 0.2s ease;
+    }
+    .switch-input:checked + .switch-slider { background: var(--primary-500); }
+    .switch-input:checked + .switch-slider::after { transform: translateX(1.2rem); }
+    .switch-input:focus + .switch-slider { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+
+    /* Form actions */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.5rem 1.1rem;
+      min-height: 2.25rem;
+      border: 1px solid var(--surface-300);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      justify-content: center;
+      font-family: inherit;
+    }
+    .btn:hover:not(:disabled) { background: var(--surface-100); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+    .btn-primary {
+      background: var(--primary-500);
+      color: white;
+      border-color: var(--primary-500);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-600); border-color: var(--primary-600); }
+    .btn-secondary {
+      background: white;
+      color: #495057;
+      border-color: #ced4da;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.42);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20vh 1rem 1rem;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+      width: 100%;
+      max-width: 26rem;
+      overflow: hidden;
+      padding: 1.5rem 1.5rem 1.25rem;
+    }
+    .modal-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.6rem;
+    }
+    .modal-body {
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.65rem;
+    }
+
+    /* Rule info callout */
+    .rule-callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      font-size: 0.8125rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+    .rule-callout .pi {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      color: #94a3b8;
+      margin-top: 0.05rem;
+    }
+    .rule-callout-text strong {
+      font-weight: 600;
+    }
+
+    /* Cross-field error */
+    .cross-error-row {
+      margin-top: 0.85rem;
+    }
+    .cross-error-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.65rem 0.9rem;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-left: 4px solid #f59e0b;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      color: #92400e;
+      line-height: 1.45;
+    }
+    .cross-error-banner .pi {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      margin-top: 0.1rem;
+      color: #f59e0b;
+    }
+
+    @media (max-width: 640px) {
+      .shell { padding: 1rem; }
+      .form-wrap { max-width: 100%; }
+      .fields-row {
+        grid-template-columns: 1fr;
+      }
+      .seg-control {
+        min-width: 0;
+        width: 100%;
+      }
+      .seg-btn {
+        flex: 1;
+        min-width: 0;
+      }
+      .tooltip {
+        left: 0;
+        transform: none;
+        width: min(17rem, calc(100vw - 3rem));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumbs-list">
+        <li><a href="#" class="breadcrumb-link" onclick="return false">Appointment Management</a></li>
+        <li class="breadcrumbs-sep" aria-hidden="true">&gt;</li>
+        <li><a href="#" class="breadcrumb-link" onclick="return false">Settings</a></li>
+        <li class="breadcrumbs-sep" aria-hidden="true">&gt;</li>
+        <li><span class="breadcrumb-current" aria-current="page">Time limits</span></li>
+      </ol>
+    </nav>
+
+    <header class="header">
+      <div>
+        <h1>Time limits</h1>
+        <p class="header-sub">Configure the time constraints applied to appointment scheduling and confirmation.</p>
+      </div>
+    </header>
+
+    <div id="feedback-message" class="message message-success hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="form-wrap">
+      <div class="section-head">
+        <div class="section-title">Time limit settings</div>
+      </div>
+
+      <div class="rule-callout" role="note">
+        <i class="pi pi-info-circle" aria-hidden="true"></i>
+        <span class="rule-callout-text"><strong>Scheduling limit must be equal to or greater than the confirmation limit.</strong><br>This guarantees every appointment can still be confirmed.</span>
+      </div>
+
+      <form id="time-limits-form" novalidate>
+        <div class="fields-row">
+
+          <div class="field-block">
+            <div class="field">
+                <label class="field-label" for="sched-limit">
+                  Appointment scheduling limit<span class="req-ast" title="Required">*</span>
+                </label>
+              <div class="input-group" id="sched-input-group">
+                <input
+                  id="sched-limit"
+                  class="num-input"
+                  type="number"
+                  min="0"
+                  max="168"
+                  value="0"
+                  aria-describedby="sched-help sched-error"
+                >
+                <div class="spin-btns">
+                  <button type="button" class="spin-btn" id="sched-increment" aria-label="Increase scheduling limit" tabindex="-1"><i class="pi pi-angle-up" aria-hidden="true"></i></button>
+                  <button type="button" class="spin-btn" id="sched-decrement" aria-label="Decrease scheduling limit" tabindex="-1"><i class="pi pi-angle-down" aria-hidden="true"></i></button>
+                </div>
+                <span class="input-addon">hrs</span>
+              </div>
+              <p id="sched-help" class="field-help">Min. 0 max. 168 hrs</p>
+              <p id="sched-error" class="field-error" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <div class="field">
+              <label class="field-label" for="confirm-limit">
+                  Appointment confirmation limit<span class="req-ast" title="Required">*</span>
+                </label>
+              <div class="input-group" id="confirm-input-group">
+                <input
+                  id="confirm-limit"
+                  class="num-input"
+                  type="number"
+                  min="0"
+                  max="168"
+                  value="0"
+                  aria-describedby="confirm-help confirm-error"
+                >
+                <div class="spin-btns">
+                  <button type="button" class="spin-btn" id="confirm-increment" aria-label="Increase confirmation limit" tabindex="-1"><i class="pi pi-angle-up" aria-hidden="true"></i></button>
+                  <button type="button" class="spin-btn" id="confirm-decrement" aria-label="Decrease confirmation limit" tabindex="-1"><i class="pi pi-angle-down" aria-hidden="true"></i></button>
+                </div>
+                <span class="input-addon">hrs</span>
+              </div>
+              <p id="confirm-help" class="field-help">Min. 0 max. 168 hrs</p>
+              <p id="confirm-error" class="field-error" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <div class="field">
+              <div class="field-label">
+                Appointment behavior
+                <span class="help-icon-wrap">
+                  <span class="help-icon" tabindex="0" aria-label="More information" aria-describedby="behavior-tooltip">
+                    <i class="pi pi-info-circle" aria-hidden="true"></i>
+                  </span>
+                  <span id="behavior-tooltip" class="tooltip" role="tooltip">Once the confirmation limit is reached, appointments are confirmed or rejected depending on this setting. Changes are not retroactive.</span>
+                </span>
+              </div>
+              <div class="seg-control" role="group" aria-label="Appointment behavior">
+                <button type="button" class="seg-btn seg-btn--active" id="seg-auto-reject" data-value="reject">Auto-reject</button>
+                <button type="button" class="seg-btn" id="seg-auto-confirm" data-value="confirm">Auto-confirm</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="cross-error-row hidden" id="cross-error-row">
+          <div class="cross-error-banner" role="alert" aria-live="polite">
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+            <span id="cross-error-text">Scheduling limit must be equal to or greater than the confirmation limit.</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="btn-cancel" disabled>Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-save" disabled>Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Save confirmation modal -->
+  <div class="modal-overlay hidden" id="save-modal-overlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
+      <div class="modal-header" id="save-modal-title">Time limit settings</div>
+      <div class="modal-body" id="save-modal-body">The time limit settings will be updated.</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="save-modal-cancel">Back</button>
+        <button type="button" class="btn btn-primary" id="save-modal-ok">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'timeLimitsConfig';
+
+      var saved = { schedLimit: 0, confirmLimit: 0, autoConfirmMode: 'reject' };
+
+      var el = {
+        feedbackMessage: document.getElementById('feedback-message'),
+        schedLimit: document.getElementById('sched-limit'),
+        schedError: document.getElementById('sched-error'),
+        schedIncrement: document.getElementById('sched-increment'),
+        schedDecrement: document.getElementById('sched-decrement'),
+        confirmLimit: document.getElementById('confirm-limit'),
+        confirmError: document.getElementById('confirm-error'),
+        confirmIncrement: document.getElementById('confirm-increment'),
+        confirmDecrement: document.getElementById('confirm-decrement'),
+        segAutoConfirm: document.getElementById('seg-auto-confirm'),
+        segAutoReject: document.getElementById('seg-auto-reject'),
+        btnCancel: document.getElementById('btn-cancel'),
+        btnSave: document.getElementById('btn-save'),
+        saveModalOverlay: document.getElementById('save-modal-overlay'),
+        saveModalCancel: document.getElementById('save-modal-cancel'),
+        saveModalOk: document.getElementById('save-modal-ok'),
+        crossErrorRow: document.getElementById('cross-error-row'),
+        saveModalBody: document.getElementById('save-modal-body')
+      };
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function parseStored(raw) {
+        try {
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object') return null;
+          var schedLimit = parseInt(parsed.schedLimit, 10);
+          var confirmLimit = parseInt(parsed.confirmLimit, 10);
+          if (isNaN(schedLimit) || isNaN(confirmLimit)) return null;
+          return {
+            schedLimit: Math.max(0, Math.min(168, schedLimit)),
+            confirmLimit: Math.max(0, Math.min(168, confirmLimit)),
+            autoConfirmMode: parsed.autoConfirmMode === 'reject' ? 'reject' : 'confirm'
+          };
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function persistSaved() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      }
+
+      function logSave() {
+        var logs = [];
+        try {
+          logs = JSON.parse(localStorage.getItem(STORAGE_KEY + '_log') || '[]');
+          if (!Array.isArray(logs)) logs = [];
+        } catch (err) {
+          logs = [];
+        }
+        logs.push({
+          timestamp: new Date().toISOString(),
+          config: {
+            schedLimit: saved.schedLimit,
+            confirmLimit: saved.confirmLimit,
+            autoConfirmMode: saved.autoConfirmMode
+          }
+        });
+        localStorage.setItem(STORAGE_KEY + '_log', JSON.stringify(logs));
+      }
+
+      function getFormValues() {
+        var sched = parseInt(el.schedLimit.value, 10);
+        var confirm = parseInt(el.confirmLimit.value, 10);
+        return {
+          schedLimit: isNaN(sched) ? -1 : sched,
+          confirmLimit: isNaN(confirm) ? -1 : confirm,
+          autoConfirmMode: el.segAutoConfirm.classList.contains('seg-btn--active') ? 'confirm' : 'reject'
+        };
+      }
+
+      function validateField(value, errorEl) {
+        if (isNaN(value) || value === '') {
+          errorEl.textContent = 'This field is required.';
+          return false;
+        }
+        if (value < 0 || value > 168) {
+          errorEl.textContent = 'Value must be between 0 and 168.';
+          return false;
+        }
+        errorEl.textContent = '';
+        return true;
+      }
+
+      function hasDiff(form) {
+        return form.schedLimit !== saved.schedLimit
+          || form.confirmLimit !== saved.confirmLimit
+          || form.autoConfirmMode !== saved.autoConfirmMode;
+      }
+
+      function isValid(form) {
+        return form.schedLimit >= 0 && form.schedLimit <= 168
+          && form.confirmLimit >= 0 && form.confirmLimit <= 168
+          && form.schedLimit >= form.confirmLimit;
+      }
+
+      function syncButtons() {
+        var form = getFormValues();
+        var valid = isValid(form);
+        var changed = hasDiff(form);
+        el.btnSave.disabled = !(valid && changed);
+        el.btnCancel.disabled = !changed;
+      }
+
+      function validate() {
+        var sched = parseInt(el.schedLimit.value, 10);
+        var confirm = parseInt(el.confirmLimit.value, 10);
+        var schedOk = validateField(sched, el.schedError);
+        var confirmOk = validateField(confirm, el.confirmError);
+        if (schedOk && confirmOk && sched < confirm) {
+          el.crossErrorRow.classList.remove('hidden');
+        } else {
+          el.crossErrorRow.classList.add('hidden');
+        }
+        syncButtons();
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function setSegMode(mode) {
+        var isConfirm = mode === 'confirm';
+        el.segAutoConfirm.classList.toggle('seg-btn--active', isConfirm);
+        el.segAutoReject.classList.toggle('seg-btn--active', !isConfirm);
+      }
+
+      function applyToForm(config) {
+        el.schedLimit.value = config.schedLimit;
+        el.confirmLimit.value = config.confirmLimit;
+        setSegMode(config.autoConfirmMode);
+      }
+
+      function showFeedback(title, body) {
+        el.feedbackMessage.innerHTML =
+          '<i class="pi pi-check toast-icon" aria-hidden="true"></i>' +
+          '<div class="toast-body">' +
+            '<span class="toast-title">' + escapeHtml(title) + '</span>' +
+            '<span class="toast-text">' + escapeHtml(body) + '</span>' +
+          '</div>' +
+          '<button class="toast-close" aria-label="Close notification"><i class="pi pi-times" aria-hidden="true"></i></button>';
+        el.feedbackMessage.classList.remove('hidden');
+        el.feedbackMessage.querySelector('.toast-close').addEventListener('click', function () {
+          el.feedbackMessage.classList.add('hidden');
+        });
+        window.clearTimeout(showFeedback._timer);
+        showFeedback._timer = window.setTimeout(function () {
+          el.feedbackMessage.classList.add('hidden');
+        }, 5000);
+      }
+
+      function openSaveModal() {
+        var form = getFormValues();
+        el.saveModalBody.textContent = 'The time limit settings will be updated.';
+        el.saveModalOverlay.classList.remove('hidden');
+        el.saveModalOverlay.setAttribute('aria-hidden', 'false');
+        el.saveModalOk.focus();
+      }
+
+      function closeSaveModal() {
+        el.saveModalOverlay.classList.add('hidden');
+        el.saveModalOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      function confirmSave() {
+        var form = getFormValues();
+        saved.schedLimit = form.schedLimit;
+        saved.confirmLimit = form.confirmLimit;
+        saved.autoConfirmMode = form.autoConfirmMode;
+        persistSaved();
+        logSave();
+        closeSaveModal();
+        syncButtons();
+        showFeedback('Done!', 'The Time limit settings has been updated.');
+      }
+
+      function cancelChanges() {
+        applyToForm(saved);
+        el.schedError.textContent = '';
+        el.confirmError.textContent = '';
+        el.crossErrorRow.classList.add('hidden');
+        syncButtons();
+      }
+
+      function makeSpinHandler(inputEl, direction, linkedEl, linkedDirection) {
+        return function (e) {
+          e.preventDefault();
+          var current = parseInt(inputEl.value, 10);
+          if (isNaN(current)) current = 0;
+          var next = clamp(current + direction, 0, 168);
+          if (linkedEl) {
+            var linked = parseInt(linkedEl.value, 10);
+            if (isNaN(linked)) linked = 0;
+            // sched decrementing: don't go below confirm value
+            // confirm incrementing: don't go above sched value
+            if (linkedDirection === 'min') next = Math.max(next, linked);
+            if (linkedDirection === 'max') next = Math.min(next, linked);
+          }
+          inputEl.value = next;
+          validate();
+        };
+      }
+
+      function bindEvents() {
+        el.schedLimit.addEventListener('input', validate);
+        el.schedLimit.addEventListener('change', validate);
+        el.confirmLimit.addEventListener('input', validate);
+        el.confirmLimit.addEventListener('change', validate);
+        el.segAutoConfirm.addEventListener('click', function () { setSegMode('confirm'); syncButtons(); });
+        el.segAutoReject.addEventListener('click', function () { setSegMode('reject'); syncButtons(); });
+
+        el.schedIncrement.addEventListener('click', makeSpinHandler(el.schedLimit, 1, null, null));
+        el.schedDecrement.addEventListener('click', makeSpinHandler(el.schedLimit, -1, el.confirmLimit, 'min'));
+        el.confirmIncrement.addEventListener('click', makeSpinHandler(el.confirmLimit, 1, el.schedLimit, 'max'));
+        el.confirmDecrement.addEventListener('click', makeSpinHandler(el.confirmLimit, -1, null, null));
+
+        el.btnCancel.addEventListener('click', cancelChanges);
+        el.btnSave.addEventListener('click', function () {
+          var form = getFormValues();
+          if (!isValid(form)) { validate(); return; }
+          openSaveModal();
+        });
+
+        el.saveModalCancel.addEventListener('click', closeSaveModal);
+        el.saveModalOk.addEventListener('click', confirmSave);
+        el.saveModalOverlay.addEventListener('click', function (event) {
+          if (event.target === el.saveModalOverlay) closeSaveModal();
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape' && !el.saveModalOverlay.classList.contains('hidden')) {
+            closeSaveModal();
+          }
+        });
+      }
+
+      function init() {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        var parsed = stored ? parseStored(stored) : null;
+        if (parsed) {
+          saved = parsed;
+        }
+        applyToForm(saved);
+        bindEvents();
+        syncButtons();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
